@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-global members = []
+members = []
 
 class LaunchRequestHandler(AbstractRequestHandler):
     """Handler for Skill Launch."""
