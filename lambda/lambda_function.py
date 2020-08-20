@@ -32,14 +32,22 @@ class LaunchRequestHandler(AbstractRequestHandler):
         r = requests.get("http://35.208.123.222:5000/")
         members = ast.literal_eval(r.text)
         
-        speak_output = "Hello. There are " + str(len(members)) + "on the server. Would you like to know who they are?"
-
+        speak_output = "Hello. There are " + str(len(members)) + " people on the server."
+        
+        if len(members) > 0:
+            speak_output += "Would you like to know who they are?"
+            return (
+                handler_input.response_builder
+                    .speak(speak_output)
+                    .ask(speak_output)
+                    .response
+            )
         return (
-            handler_input.response_builder
-                .speak(speak_output)
-                .ask(speak_output)
-                .response
-        )
+                handler_input.response_builder
+                    .speak(speak_output)
+                    .ask(speak_output)
+                    .response
+            )
 
 
 class ListMembersIntentHandler(AbstractRequestHandler):
