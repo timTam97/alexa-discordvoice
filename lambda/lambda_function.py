@@ -17,6 +17,8 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
+global members = []
+
 class LaunchRequestHandler(AbstractRequestHandler):
     """Handler for Skill Launch."""
     def can_handle(self, handler_input):
@@ -25,6 +27,7 @@ class LaunchRequestHandler(AbstractRequestHandler):
         return ask_utils.is_request_type("LaunchRequest")(handler_input)
 
     def handle(self, handler_input):
+        global members
         # type: (HandlerInput) -> Response
         r = requests.get("http://35.208.123.222:5000/")
         members = ast.literal_eval(r.text)
@@ -54,8 +57,6 @@ class ListMembersIntentHandler(AbstractRequestHandler):
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
-        r = requests.get("http://35.208.123.222:5000/")
-        members = ast.literal_eval(r.text)
         speak_output = []
         for member in members:
             speak_output.append(member + ",")
