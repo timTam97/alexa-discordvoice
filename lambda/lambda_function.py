@@ -6,6 +6,8 @@
 # This sample is built using the handler classes approach in skill builder.
 import logging
 import ask_sdk_core.utils as ask_utils
+import requests
+import ast
 
 from ask_sdk_core.skill_builder import SkillBuilder
 from ask_sdk_core.dispatch_components import AbstractRequestHandler
@@ -27,7 +29,10 @@ class LaunchRequestHandler(AbstractRequestHandler):
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
-        speak_output = "Welcome, you can say Hello or Help. Which would you like to try?"
+        r = requests.get("http://35.208.123.222:5000/")
+        members = ast.literal_eval(r.text)
+        
+        speak_output = "Hello. There are " + str(len(members)) + "on the server. Would you like to know who they are?"
 
         return (
             handler_input.response_builder
@@ -38,14 +43,19 @@ class LaunchRequestHandler(AbstractRequestHandler):
 
 
 class ListMembersIntentHandler(AbstractRequestHandler):
-    """Handler for Hello World Intent."""
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
         return ask_utils.is_intent_name("ListMembersIntent")(handler_input)
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
-        speak_output = "Hello World!"
+        r = requests.get("http://35.208.123.222:5000/")
+        members = ast.literal_eval(r.text)
+        speak_output = []
+        for member in members:
+            speak_output.append(member + ",")
+        
+        speak_output = "".join(speak_output)
 
         return (
             handler_input.response_builder
