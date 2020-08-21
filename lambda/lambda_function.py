@@ -36,7 +36,7 @@ class LaunchRequestHandler(AbstractRequestHandler):
             pronoun = "is"
         else:
             pronoun = "are"
-        speak_output = "Hello. There " + pronoun + " " + str(len(members)) + " people on the server."
+        speak_output = "There " + pronoun + " " + str(len(members)) + " people on the server."
         
         if len(members) > 0:
             speak_output += " Would you like to know who they are?"
