@@ -29,7 +29,7 @@ class LaunchRequestHandler(AbstractRequestHandler):
     def handle(self, handler_input):
         global members
         # type: (HandlerInput) -> Response
-        r = requests.get("http://35.208.123.222:5000/")
+        r = requests.get("http://35.208.123.222:5000/QWkiM3i4eKXnrslkgZ6TK4RPoAw849VZQt60P2DwP26iUZgBkn")
         members = ast.literal_eval(r.text)
         
         if len(members) == 1:
