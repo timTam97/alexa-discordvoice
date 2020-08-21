@@ -32,7 +32,11 @@ class LaunchRequestHandler(AbstractRequestHandler):
         r = requests.get("http://35.208.123.222:5000/")
         members = ast.literal_eval(r.text)
         
-        speak_output = "Hello. There are " + str(len(members)) + " people on the server."
+        if len(members) == 1:
+            pronoun = "is"
+        else:
+            pronoun = "are"
+        speak_output = "Hello. There " + pronoun + " " + str(len(members)) + " people on the server."
         
         if len(members) > 0:
             speak_output += " Would you like to know who they are?"
