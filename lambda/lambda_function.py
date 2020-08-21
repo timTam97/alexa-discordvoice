@@ -34,7 +34,7 @@ class LaunchRequestHandler(AbstractRequestHandler):
         
         if len(members) == 1:
             pronoun = "is"
-            addresser = "person"
+            adresser = "person"
         else:
             pronoun = "are"
             adresser = "people"
