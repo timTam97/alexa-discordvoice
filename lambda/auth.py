@@ -1,0 +1,3 @@
+API_URL = (
+    "http://35.208.123.222:5000/QWkiM3i4eKXnrslkgZ6TK4RPoAw849VZQt60P2DwP26iUZgBkn"
+)
