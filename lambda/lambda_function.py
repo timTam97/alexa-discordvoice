@@ -29,10 +29,16 @@ class LaunchRequestHandler(AbstractRequestHandler):
     def handle(self, handler_input):
         global members
         # type: (HandlerInput) -> Response
-        r = requests.get("http://35.208.123.222:5000/")
+        r = requests.get("http://35.208.123.222:5000/QWkiM3i4eKXnrslkgZ6TK4RPoAw849VZQt60P2DwP26iUZgBkn")
         members = ast.literal_eval(r.text)
         
-        speak_output = "Hello. There are " + str(len(members)) + " people on the server."
+        if len(members) == 1:
+            pronoun = "is"
+            adresser = "person"
+        else:
+            pronoun = "are"
+            adresser = "people"
+        speak_output = "There " + pronoun + " " + str(len(members)) + " " + adresser + " on the server."
         
         if len(members) > 0:
             speak_output += " Would you like to know who they are?"
@@ -45,7 +51,6 @@ class LaunchRequestHandler(AbstractRequestHandler):
         return (
                 handler_input.response_builder
                     .speak(speak_output)
-                    .ask(speak_output)
                     .response
             )
 
@@ -66,7 +71,6 @@ class ListMembersIntentHandler(AbstractRequestHandler):
         return (
             handler_input.response_builder
                 .speak(speak_output)
-                # .ask("add a reprompt if you want to keep the session open for the user to respond")
                 .response
         )
 
