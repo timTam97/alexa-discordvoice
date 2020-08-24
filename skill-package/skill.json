@@ -32,18 +32,16 @@
       "isAvailableWorldwide": true,
       "locales": {
         "en-AU": {
-          "description": "Sample Full Description",
+          "description": "",
           "examplePhrases": [
-            "Alexa open hello world",
-            "hello",
-            "help"
+            "Alexa open discord voice chat"
           ],
           "keywords": [],
           "name": "discord voice chat",
-          "summary": "Sample Short Description"
+          "summary": ""
         }
       },
-      "testingInstructions": "Sample Testing Instructions."
+      "testingInstructions": ""
     }
   }
 }
