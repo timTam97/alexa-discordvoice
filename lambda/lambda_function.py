@@ -101,19 +101,6 @@ class SessionEndedRequestHandler(AbstractRequestHandler):
         return handler_input.response_builder.response
 
 
-class IntentReflectorHandler(AbstractRequestHandler):
-    def can_handle(self, handler_input):
-        # type: (HandlerInput) -> bool
-        return ask_utils.is_request_type("IntentRequest")(handler_input)
-
-    def handle(self, handler_input):
-        # type: (HandlerInput) -> Response
-        intent_name = ask_utils.get_intent_name(handler_input)
-        speak_output = "You just triggered " + intent_name + "."
-
-        return handler_input.response_builder.speak(speak_output).response
-
-
 class CatchAllExceptionHandler(AbstractExceptionHandler):
     def can_handle(self, handler_input, exception):
         # type: (HandlerInput, Exception) -> bool
@@ -138,7 +125,6 @@ sb.add_request_handler(LaunchRequestHandler())
 sb.add_request_handler(ListMembersIntentHandler())
 sb.add_request_handler(CancelOrStopIntentHandler())
 sb.add_request_handler(SessionEndedRequestHandler())
-sb.add_request_handler(IntentReflectorHandler())
 
 sb.add_exception_handler(CatchAllExceptionHandler())
 
