@@ -1,5 +1,6 @@
 import ast
 import logging
+from typing import Tuple
 
 import ask_sdk_core.utils as ask_utils
 import auth
@@ -17,6 +18,16 @@ logger.setLevel(logging.INFO)
 members = []
 
 
+def create_grammar(num_members: int, num_channels: int) -> Tuple[str, str]:
+    member_addresser = "people"
+    ch_addresser = "channels"
+    if num_channels == 1:
+        ch_addresser = "channel"
+    if num_members == 1:
+        member_addresser = "person"
+    return member_addresser, ch_addresser
+
+
 class LaunchRequestHandler(AbstractRequestHandler):
     """Handler for Skill Launch."""
 
@@ -25,26 +36,25 @@ class LaunchRequestHandler(AbstractRequestHandler):
 
     def handle(self, handler_input: HandlerInput) -> Response:
         global members
-        r = requests.get(
-            auth.API_URL,
+        voice_data = requests.get(
+            auth.API_BASE_URL + "/members",
             headers={"Authorization": auth.HEADER_AUTH},
+        ).json()
+        member_count = sum(len(sub) for sub in voice_data.values())
+        channel_count = len({k: v for (k, v) in voice_data.items() if len(v) > 0})
+        members = list(
+            map(
+                lambda x: x.get("name"),
+                [
+                    item
+                    for sublist in [sub for sub in voice_data.values()]
+                    for item in sublist
+                ],
+            )
         )
-        members = ast.literal_eval(r.text)
-
-        if len(members) == 1:
-            pronoun = "is"
-            adresser = "person"
-        else:
-            pronoun = "are"
-            adresser = "people"
-        speak_output = (
-            "There "
-            + pronoun
-            + " "
-            + str(len(members))
-            + " "
-            + adresser
-            + " on the server."
+        people, channels = create_grammar(member_count, channel_count)
+        speak_output = "There are {} {} in {} {} on the server.".format(
+            member_count, people, channel_count, channels
         )
 
         if len(members) > 0:
@@ -62,11 +72,7 @@ class ListMembersIntentHandler(AbstractRequestHandler):
         return ask_utils.is_intent_name("ListMembersIntent")(handler_input)
 
     def handle(self, handler_input: HandlerInput) -> Response:
-        speak_output = []
-        for member in members:
-            speak_output.append(member + ",")
-        speak_output = "".join(speak_output)
-        return handler_input.response_builder.speak(speak_output).response
+        return handler_input.response_builder.speak(", ".join(members)).response
 
 
 class CatchAllExceptionHandler(AbstractExceptionHandler):
@@ -89,8 +95,6 @@ sb = SkillBuilder()
 
 sb.add_request_handler(LaunchRequestHandler())
 sb.add_request_handler(ListMembersIntentHandler())
-sb.add_request_handler(CancelOrStopIntentHandler())
-sb.add_request_handler(SessionEndedRequestHandler())
 
 sb.add_exception_handler(CatchAllExceptionHandler())
 
