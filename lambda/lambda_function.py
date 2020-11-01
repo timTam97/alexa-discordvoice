@@ -1,17 +1,13 @@
-# -*- coding: utf-8 -*-
-
-
-import logging
-import ask_sdk_core.utils as ask_utils
-import requests
 import ast
+import logging
+
+import ask_sdk_core.utils as ask_utils
 import auth
-
-from ask_sdk_core.skill_builder import SkillBuilder
-from ask_sdk_core.dispatch_components import AbstractRequestHandler
-from ask_sdk_core.dispatch_components import AbstractExceptionHandler
+import requests
+from ask_sdk_core.dispatch_components import (AbstractExceptionHandler,
+                                              AbstractRequestHandler)
 from ask_sdk_core.handler_input import HandlerInput
-
+from ask_sdk_core.skill_builder import SkillBuilder
 from ask_sdk_model import Response
 
 logger = logging.getLogger(__name__)
@@ -24,14 +20,15 @@ members = []
 class LaunchRequestHandler(AbstractRequestHandler):
     """Handler for Skill Launch."""
 
-    def can_handle(self, handler_input):
-        # type: (HandlerInput) -> bool
+    def can_handle(self, handler_input: HandlerInput) -> bool:
         return ask_utils.is_request_type("LaunchRequest")(handler_input)
 
-    def handle(self, handler_input):
+    def handle(self, handler_input: HandlerInput) -> Response:
         global members
-        # type: (HandlerInput) -> Response
-        r = requests.get(auth.API_URL)
+        r = requests.get(
+            auth.API_URL,
+            headers={"Authorization": auth.HEADER_AUTH},
+        )
         members = ast.literal_eval(r.text)
 
         if len(members) == 1:
@@ -61,12 +58,10 @@ class LaunchRequestHandler(AbstractRequestHandler):
 
 
 class ListMembersIntentHandler(AbstractRequestHandler):
-    def can_handle(self, handler_input):
-        # type: (HandlerInput) -> bool
+    def can_handle(self, handler_input: HandlerInput) -> bool:
         return ask_utils.is_intent_name("ListMembersIntent")(handler_input)
 
-    def handle(self, handler_input):
-        # type: (HandlerInput) -> Response
+    def handle(self, handler_input: HandlerInput) -> Response:
         speak_output = []
         for member in members:
             speak_output.append(member + ",")
@@ -74,40 +69,11 @@ class ListMembersIntentHandler(AbstractRequestHandler):
         return handler_input.response_builder.speak(speak_output).response
 
 
-class CancelOrStopIntentHandler(AbstractRequestHandler):
-    """Single handler for Cancel and Stop Intent."""
-
-    def can_handle(self, handler_input):
-        # type: (HandlerInput) -> bool
-        return ask_utils.is_intent_name("AMAZON.CancelIntent")(
-            handler_input
-        ) or ask_utils.is_intent_name("AMAZON.StopIntent")(handler_input)
-
-    def handle(self, handler_input):
-        # type: (HandlerInput) -> Response
-        # Don't be annoying and talk here
-        return handler_input.response_builder.response
-
-
-class SessionEndedRequestHandler(AbstractRequestHandler):
-    """Handler for Session End."""
-
-    def can_handle(self, handler_input):
-        # type: (HandlerInput) -> bool
-        return ask_utils.is_request_type("SessionEndedRequest")(handler_input)
-
-    def handle(self, handler_input):
-        # type: (HandlerInput) -> Response
-        return handler_input.response_builder.response
-
-
 class CatchAllExceptionHandler(AbstractExceptionHandler):
-    def can_handle(self, handler_input, exception):
-        # type: (HandlerInput, Exception) -> bool
+    def can_handle(self, handler_input: HandlerInput, exception: Exception) -> bool:
         return True
 
-    def handle(self, handler_input, exception):
-        # type: (HandlerInput, Exception) -> Response
+    def handle(self, handler_input: HandlerInput, exception: Exception) -> Response:
         logger.error(exception, exc_info=True)
 
         speak_output = "Sorry, I had trouble doing what you asked. Please try again."
