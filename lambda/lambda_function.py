@@ -40,14 +40,14 @@ class LaunchRequestHandler(AbstractRequestHandler):
             auth.API_BASE_URL + "/members",
             headers={"Authorization": auth.HEADER_AUTH},
         ).json()
-        member_count = sum(len(sub) for sub in voice_data.values())
-        channel_count = len({k: v for (k, v) in voice_data.items() if len(v) > 0})
+        member_count = voice_data["member_count"]
+        channel_count = voice_data["occupied_channels"]
         members = list(
             map(
                 lambda x: x.get("name"),
                 [
                     item
-                    for sublist in [sub for sub in voice_data.values()]
+                    for sublist in [sub for sub in voice_data["channels"].values()]
                     for item in sublist
                 ],
             )
